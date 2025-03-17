@@ -18,24 +18,20 @@ public class ExtentManager {
             reportPath = basePath + "/target/reports/ExtentReport.html";
 
             File reportFile = new File(reportPath);
-            File reportDir = reportFile.getParentFile();
-            if (!reportDir.exists()) {
-                if (reportDir.mkdirs()) {
-                    System.out.println("✅ Diretório de relatórios criado: " + reportDir.getAbsolutePath());
-                } else {
-                    System.out.println("❌ ERRO: Falha ao criar o diretório de relatórios!");
-                }
+            if (!reportFile.getParentFile().exists()) {
+                boolean created = reportFile.getParentFile().mkdirs();
+                System.out.println("📂 Diretório criado? " + created + " | Caminho: " + reportFile.getParentFile().getAbsolutePath());
             }
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
-            sparkReporter.config().setTheme(Theme.STANDARD);
+            sparkReporter.config().setTheme(Theme.DARK);
             sparkReporter.config().setDocumentTitle("Relatório de Testes Automatizados");
-            sparkReporter.config().setReportName("Execução dos Testes - Selenium");
+            sparkReporter.config().setReportName("Execução dos Testes - Magento");
             sparkReporter.config().setEncoding("UTF-8");
 
             extent = new ExtentReports();
             extent.attachReporter(sparkReporter);
-            System.out.println("✅ ExtentReports inicializado: " + reportPath);
+            System.out.println("✅ ExtentReports inicializado com sucesso! Relatório será gerado em: " + reportPath);
         }
         return extent;
     }
@@ -52,9 +48,9 @@ public class ExtentManager {
     public static void flush() {
         if (extent != null) {
             extent.flush();
-            System.out.println("📄 Relatório salvo com sucesso em: " + reportPath);
+            System.out.println("📄 Relatório gerado com sucesso: " + reportPath);
         } else {
-            System.out.println("❌ ERRO: ExtentReports não foi inicializado corretamente.");
+            System.out.println("❌ ERRO: ExtentReports não inicializado corretamente.");
         }
     }
 }
