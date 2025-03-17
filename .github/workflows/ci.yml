@@ -14,8 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Clonar Repositório
+      - name: 📥 Clonar o Repositório
         uses: actions/checkout@v4
+
+      - name: 📦 Instalar Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
       - name: 🔧 Configurar Java 21 e Maven
         uses: actions/setup-java@v4
@@ -26,7 +31,7 @@ jobs:
       - name: 🐳 Iniciar o Selenium Grid no Docker
         run: docker-compose up -d selenium-chrome
 
-      - name: 📦 Instalar Dependências Maven
+      - name: 📦 Instalar Dependências do Maven
         run: mvn clean install
 
       - name: ▶️ Executar Testes dentro do Docker
