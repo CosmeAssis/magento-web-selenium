@@ -17,21 +17,22 @@ public class ExtentManager {
             String basePath = System.getProperty("user.dir");
             reportPath = basePath + "/target/reports/ExtentReport.html";
 
-            File reportFile = new File(reportPath);
-            if (!reportFile.getParentFile().exists()) {
-                boolean created = reportFile.getParentFile().mkdirs();
-                System.out.println("📂 Diretório criado? " + created + " | Caminho: " + reportFile.getParentFile().getAbsolutePath());
+            // ✅ Criar o diretório manualmente se não existir
+            File reportDir = new File(basePath + "/target/reports/");
+            if (!reportDir.exists()) {
+                boolean created = reportDir.mkdirs();
+                System.out.println("📂 Diretório criado? " + created + " | Caminho: " + reportDir.getAbsolutePath());
             }
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
             sparkReporter.config().setTheme(Theme.DARK);
             sparkReporter.config().setDocumentTitle("Relatório de Testes Automatizados");
-            sparkReporter.config().setReportName("Execução dos Testes - Magento");
+            sparkReporter.config().setReportName("Execução dos Testes");
             sparkReporter.config().setEncoding("UTF-8");
 
             extent = new ExtentReports();
             extent.attachReporter(sparkReporter);
-            System.out.println("✅ ExtentReports inicializado com sucesso! Relatório será gerado em: " + reportPath);
+            System.out.println("✅ ExtentReports inicializado com sucesso!");
         }
         return extent;
     }
@@ -48,7 +49,7 @@ public class ExtentManager {
     public static void flush() {
         if (extent != null) {
             extent.flush();
-            System.out.println("📄 Relatório gerado com sucesso: " + reportPath);
+            System.out.println("📄 Relatório salvo em: " + reportPath);
         } else {
             System.out.println("❌ ERRO: ExtentReports não inicializado corretamente.");
         }
