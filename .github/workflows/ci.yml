@@ -1,4 +1,4 @@
-name: Testes Automatizados - Selenium
+name: Testes Automatizados Magento - Selenium Grid com Docker
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   run-tests:
-    name: Executando Testes Automatizados no Docker
+    name: Executar Testes Automatizados no Docker
     runs-on: ubuntu-latest
 
     steps:
@@ -24,19 +24,19 @@ jobs:
           distribution: 'temurin'
 
       - name: 🐳 Iniciar o Selenium Grid no Docker
-        run: docker-compose up -d
+        run: docker compose up -d  # 🔥 Alterado 'docker-compose' para 'docker compose'
 
       - name: 📦 Instalar Dependências do Maven
         run: mvn clean install
 
       - name: ▶️ Executar Testes Dentro do Docker
-        run: docker-compose run --rm tests
+        run: docker compose run --rm tests  # 🔥 Alterado 'docker-compose' para 'docker compose'
 
-      - name: 📤 Fazer Upload do Relatório de Testes Para o GitHub Actions
+      - name: 📤 Fazer Upload do Relatório de Testes
         uses: actions/upload-artifact@v4
         with:
           name: ExtentReport
           path: target/reports/ExtentReport.html
 
       - name: 🛑 Derrubar os Containers Após os Testes
-        run: docker-compose down
+        run: docker compose down  # 🔥 Alterado 'docker-compose' para 'docker compose'
