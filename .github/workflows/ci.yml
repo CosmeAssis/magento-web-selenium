@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Clonar o Repositório
+      - name: 📥 Clonar Repositório
         uses: actions/checkout@v4
 
       - name: 🔧 Configurar Java 21 e Maven
@@ -23,14 +23,26 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: 📦 Instalar Dependências do Maven
+      - name: 🐳 Iniciar o Selenium Grid no Docker
+        run: docker-compose up -d selenium-chrome
+
+      - name: 📦 Instalar Dependências Maven
         run: mvn clean install
 
-      - name: ▶️ Executar Testes
-        run: mvn test
+      - name: ▶️ Executar Testes dentro do Docker
+        run: docker-compose run --rm tests
 
-      - name: 📤 Fazer Upload do Relatório de Testes
+      - name: 📤 Fazer Upload do Relatório ExtentReports
         uses: actions/upload-artifact@v4
         with:
-          name: CucumberReport
-          path: target/reports/cucumber-report.html
+          name: ExtentReport
+          path: target/reports/ExtentReport.html
+
+      - name: 📤 Fazer Upload do Relatório Allure
+        uses: actions/upload-artifact@v4
+        with:
+          name: AllureReport
+          path: target/allure-results/
+
+      - name: 🛑 Derrubar os Containers Após os Testes
+        run: docker-compose down

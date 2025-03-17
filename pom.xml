@@ -14,7 +14,6 @@
   </properties>
 
   <dependencies>
-    <!-- Selenium WebDriver -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
@@ -48,6 +47,13 @@
       <version>5.1.1</version>
     </dependency>
 
+    <!-- Allure Reports -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-cucumber7-jvm</artifactId>
+      <version>2.21.0</version>
+    </dependency>
+
     <!-- WebDriverManager -->
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
@@ -55,6 +61,22 @@
       <version>5.6.2</version>
     </dependency>
   </dependencies>
+
+  <!--Correção de Conflito de Dependências -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>messages</artifactId>
+        <version>22.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>gherkin</artifactId>
+        <version>26.0.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
@@ -84,9 +106,26 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M7</version>
         <configuration>
-          <testFailureIgnore>true</testFailureIgnore>
+          <systemPropertyVariables>
+            <allure.results.directory>target/allure-results</allure.results.directory>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
+
+      <!-- Plugin do Allure para Gerar os Relatórios -->
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.11.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>

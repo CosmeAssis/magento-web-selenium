@@ -8,11 +8,10 @@ import io.cucumber.testng.CucumberOptions;
         glue = "com.template.step",
         plugin = {
                 "pretty",
-                "html:target/reports/cucumber-report.html",
-                "json:target/reports/cucumber-report.json",
-                "junit:target/reports/cucumber-report.xml"
+                "json:target/allure-results/cucumber-report.json",
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         },
-        monochrome = true  // Melhor leitura dos logs no terminal
+        monochrome = true
 )
 public class TestRunner extends AbstractTestNGCucumberTests {
 }

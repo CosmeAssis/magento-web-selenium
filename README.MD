@@ -1,4 +1,4 @@
-# 🛒 Magento E2E Test Automation
+# Template Automação Selenium/Java
 
 Este projeto contém testes **automatizados End-to-End (E2E)** para o site Magento, simulando um fluxo completo de compra.  
 Os testes foram desenvolvidos utilizando **Selenium WebDriver, Cucumber, TestNG e ExtentReports**.
