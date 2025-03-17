@@ -1,18 +1,47 @@
-version: '3.8'
+name: Testes Automatizados - Selenium
 
-services:
-  selenium-chrome:
-    image: selenium/standalone-chrome:4.14.1
-    shm_size: 2g  # Aumenta memória compartilhada para estabilidade do Chrome
-    ports:
-      - "4444:4444"  # Porta do Selenium Server
-      - "7900:7900"  # Porta do VNC Viewer (opcional para depuração visual)
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
-  tests:
-    build: .
-    depends_on:
-      - selenium-chrome
-    environment:
-      - BROWSER=chrome
-      - SELENIUM_REMOTE_URL=http://selenium-chrome:4444/wd/hub
-    command: ["mvn", "test"]
+jobs:
+  run-tests:
+    name: Executar Testes Automatizados no Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar o Repositório
+        uses: actions/checkout@v4
+
+      - name: 🐳 Instalar Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: 🔧 Configurar Java 21 e Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 🐳 Iniciar o Selenium Grid no Docker
+        run: docker-compose up -d
+
+      - name: 📦 Instalar Dependências do Maven
+        run: mvn clean install
+
+      - name: ▶️ Executar Testes Dentro do Docker
+        run: docker-compose run --rm tests
+
+      - name: 📤 Fazer Upload do Relatório de Testes
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExtentReport
+          path: target/reports/ExtentReport.html
+
+      - name: 🛑 Derrubar os Containers Após os Testes
+        run: docker-compose down
