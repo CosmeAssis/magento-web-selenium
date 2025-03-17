@@ -1,21 +1,14 @@
-# 🔹 Usando imagem base do Maven com OpenJDK
+# 🔹 Usa a imagem oficial do Maven + Java 21
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 
-# 🔹 Definir diretório de trabalho
+# 🔹 Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# 🔹 Copiar os arquivos do código para o container
+# 🔹 Copia os arquivos do projeto para dentro do container
 COPY . .
 
-# 🔹 Instalar dependências do Maven
+# 🔹 Instala as dependências do Maven
 RUN mvn clean install
 
-# 🔹 Instalar o Allure Commandline dentro do container
-RUN apt-get update && apt-get install -y curl unzip && \
-    curl -o allure-2.21.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.21.0/allure-2.21.0.zip && \
-    unzip allure-2.21.0.zip && \
-    mv allure-2.21.0 /opt/allure && \
-    ln -s /opt/allure/bin/allure /usr/bin/allure
-
-# 🔹 Comando padrão ao rodar o container
+# 🔹 Comando padrão ao rodar o container (executar os testes)
 CMD ["mvn", "test"]

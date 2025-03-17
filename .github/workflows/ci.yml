@@ -1,26 +1,18 @@
-name: Testes Automatizados Selenium
+name: Testes Automatizados - Selenium
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   run-tests:
-    name: Executar Testes Automatizados
+    name: Executar Testes Automatizados no Docker
     runs-on: ubuntu-latest
 
     steps:
       - name: 📥 Clonar o Repositório
         uses: actions/checkout@v4
-
-      - name: 📦 Instalar Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
 
       - name: 🔧 Configurar Java 21 e Maven
         uses: actions/setup-java@v4
@@ -29,30 +21,19 @@ jobs:
           distribution: 'temurin'
 
       - name: 🐳 Iniciar o Selenium Grid no Docker
-        run: docker-compose up -d selenium-chrome
-
-      - name: ⏳ Aguardar o Selenium Grid Inicializar
-        run: |
-          echo "⌛ Aguardando o Selenium Grid estar pronto..."
-          sleep 15  # Aguarda 15 segundos para garantir que o Grid iniciou
+        run: docker-compose up -d
 
       - name: 📦 Instalar Dependências do Maven
         run: mvn clean install
 
-      - name: ▶️ Executar Testes dentro do Docker
+      - name: ▶️ Executar Testes Dentro do Docker
         run: docker-compose run --rm tests
 
-      - name: 📤 Fazer Upload do Relatório ExtentReports
+      - name: 📤 Fazer Upload do Relatório de Testes
         uses: actions/upload-artifact@v4
         with:
           name: ExtentReport
           path: target/reports/ExtentReport.html
-
-      - name: 📤 Fazer Upload do Relatório Allure
-        uses: actions/upload-artifact@v4
-        with:
-          name: AllureReport
-          path: target/allure-results/
 
       - name: 🛑 Derrubar os Containers Após os Testes
         run: docker-compose down
