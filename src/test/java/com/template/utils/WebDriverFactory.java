@@ -6,6 +6,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 
 public class WebDriverFactory {
@@ -13,36 +16,37 @@ public class WebDriverFactory {
 
     public static WebDriver getDriver(String browser) {
         if (driver == null) {
-            try {
-                boolean isHeadless = Boolean.parseBoolean(GlobalParameters.get("headless"));
+            boolean isRunningInCiCd = System.getenv("CI") != null;
+            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+            String seleniumServerUrl = System.getenv("SELENIUM_REMOTE_URL");
 
+            try {
                 switch (browser.toLowerCase()) {
                     case "firefox":
-                        WebDriverManager.firefoxdriver().setup();
                         FirefoxOptions firefoxOptions = new FirefoxOptions();
                         if (isHeadless) {
                             firefoxOptions.addArguments("--headless");
                         }
-                        driver = new FirefoxDriver(firefoxOptions);
+                        driver = isRunningInCiCd
+                                ? new RemoteWebDriver(new URL(seleniumServerUrl), firefoxOptions) // CI/CD (Docker)
+                                : new FirefoxDriver(firefoxOptions); // Local
                         break;
 
                     default: // Chrome (padrão)
-                        WebDriverManager.chromedriver().setup();
                         ChromeOptions chromeOptions = new ChromeOptions();
                         if (isHeadless) {
-                            chromeOptions.addArguments("--headless");
-                            chromeOptions.addArguments("--disable-gpu");
-                            chromeOptions.addArguments("--window-size=1920,1080");
+                            chromeOptions.addArguments("--headless", "--disable-gpu", "--window-size=1920,1080");
                         }
-                        driver = new ChromeDriver(chromeOptions);
+                        driver = isRunningInCiCd
+                                ? new RemoteWebDriver(new URL(seleniumServerUrl), chromeOptions) // CI/CD (Docker)
+                                : new ChromeDriver(chromeOptions); // Local
                         break;
                 }
 
-                driver.manage().window().maximize();
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-                System.out.println("✅ Navegador iniciado: " + browser);
-            } catch (Exception e) {
-                throw new RuntimeException("Erro ao inicializar WebDriver: " + e.getMessage(), e);
+                System.out.println("✅ WebDriver inicializado com sucesso!");
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("ERRO: URL do Selenium Server inválida para CI/CD: " + seleniumServerUrl, e);
             }
         }
         return driver;
@@ -52,7 +56,7 @@ public class WebDriverFactory {
         if (driver != null) {
             driver.quit();
             driver = null;
-            System.out.println("🛑 WebDriver fechado com sucesso.");
+            System.out.println("🛑 WebDriver fechado corretamente.");
         }
     }
 }
