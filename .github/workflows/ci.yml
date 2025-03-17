@@ -1,4 +1,4 @@
-name: Testes Automatizados Magento
+name: Testes Automatizados Magento - Sem Docker
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   run-tests:
-    name: Executando Testes Automatizados no Docker
+    name: Executando Testes E2E no GitHub Actions
     runs-on: ubuntu-latest
 
     steps:
@@ -23,14 +23,16 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: 🐳 Iniciar o Selenium Grid no Docker
-        run: docker-compose up -d
+      - name: 🌐 Instalar o Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
       - name: 📦 Instalar Dependências do Maven
         run: mvn clean install
 
-      - name: ▶️ Executar Testes Dentro do Docker
-        run: docker-compose run --rm tests
+      - name: ▶️ Executar Testes
+        run: mvn test
 
       - name: 📂 Verificar se o Relatório do ExtentReport Existe
         run: ls -lah target/reports/
@@ -40,6 +42,3 @@ jobs:
         with:
           name: ExtentReport
           path: target/reports/ExtentReport.html
-
-      - name: 🛑 Derrubar os Containers Após os Testes
-        run: docker-compose down
