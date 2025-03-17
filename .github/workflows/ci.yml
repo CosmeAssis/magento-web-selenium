@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   run-tests:
-    name: Executar Testes Automatizados no Docker
+    name: Executando Testes Automatizados no Docker
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +32,7 @@ jobs:
       - name: ▶️ Executar Testes Dentro do Docker
         run: docker-compose run --rm tests
 
-      - name: 📤 Fazer Upload do Relatório de Testes
+      - name: 📤 Fazer Upload do Relatório de Testes Para o GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: ExtentReport
