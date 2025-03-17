@@ -1,29 +1,39 @@
-version: '3.8'
+name: Testes Automatizados Selenium
 
-services:
-  selenium-chrome:
-    image: selenium/standalone-chrome:4.14.1
-    shm_size: 2g
-    ports:
-      - "4444:4444"
-      - "7900:7900"
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
-  tests:
-    build: .
-    depends_on:
-      - selenium-chrome
-    environment:
-      - BROWSER=chrome
-      - SELENIUM_REMOTE_URL=http://selenium-chrome:4444/wd/hub
-    command: ["mvn", "test"]
+jobs:
+  run-tests:
+    name: Executar Testes Automatizados
+    runs-on: ubuntu-latest
 
-  allure:
-    image: frankescobar/allure-docker-service
-    ports:
-      - "5050:5050"
-    environment:
-      CHECK_RESULTS_EVERY_SECONDS: 3
-      KEEP_HISTORY: 1
-    volumes:
-      - ./target/allure-results:/app/allure-results
-      - ./target/allure-report:/app/allure-report
+    steps:
+      - name: 📥 Clonar o Repositório
+        uses: actions/checkout@v4
+
+      - name: 🔧 Configurar Java 21 e Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 🚀 Definir variáveis para rodar em Headless
+        run: echo "BROWSER=chrome" >> $GITHUB_ENV && echo "HEADLESS=true" >> $GITHUB_ENV
+
+      - name: 📦 Instalar Dependências do Maven
+        run: mvn clean install
+
+      - name: ▶️ Executar Testes
+        run: mvn test -Dbrowser=$BROWSER -Dheadless=$HEADLESS
+
+      - name: 📤 Fazer Upload do Relatório ExtentReports
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExtentReport
+          path: target/reports/ExtentReport.html

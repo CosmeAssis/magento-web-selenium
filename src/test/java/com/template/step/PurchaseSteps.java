@@ -16,7 +16,7 @@ public class PurchaseSteps {
     private OrderConfirmationPage confirmationPage;
 
     public PurchaseSteps() {
-        this.driver = WebDriverFactory.getDriver("chrome"); // 🔥 Garante que o WebDriver seja corretamente instanciado
+        this.driver = WebDriverFactory.getDriver(System.getProperty("browser", "chrome")); // 🔥 Solução para o GitHub Actions
         this.loginPage = new LoginPage(driver);
         this.homePage = new HomePage(driver);
         this.productPage = new ProductPage(driver);

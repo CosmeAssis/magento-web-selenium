@@ -1,6 +1,5 @@
 package com.template.utils;
 
-import com.aventstack.extentreports.MediaEntityBuilder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.AfterAll;
@@ -19,7 +18,7 @@ public class Hooks {
     @Before
     public void setup(Scenario scenario) {
         driver = WebDriverFactory.getDriver("chrome");
-        ExtentManager.createTest(scenario.getName()); // 🔥 Adiciona cenário ao relatório
+        ExtentManager.createTest(scenario.getName());
         System.out.println("🚀 Teste iniciado: " + scenario.getName());
     }
 
@@ -29,10 +28,12 @@ public class Hooks {
             String screenshotPath = captureScreenshot(scenario.getName());
             try {
                 ExtentManager.getTest().fail("❌ Falha no Teste",
-                        MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+                        com.aventstack.extentreports.MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
             } catch (Exception e) {
                 System.out.println("⚠ Erro ao anexar screenshot: " + e.getMessage());
             }
+        } else {
+            ExtentManager.getTest().pass("✅ Teste passou com sucesso.");
         }
 
         WebDriverFactory.quitDriver();

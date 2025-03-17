@@ -18,19 +18,24 @@ public class ExtentManager {
             reportPath = basePath + "/target/reports/ExtentReport.html";
 
             File reportFile = new File(reportPath);
-            if (!reportFile.getParentFile().exists()) {
-                reportFile.getParentFile().mkdirs();
+            File reportDir = reportFile.getParentFile();
+            if (!reportDir.exists()) {
+                if (reportDir.mkdirs()) {
+                    System.out.println("✅ Diretório de relatórios criado: " + reportDir.getAbsolutePath());
+                } else {
+                    System.out.println("❌ ERRO: Falha ao criar o diretório de relatórios!");
+                }
             }
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
             sparkReporter.config().setTheme(Theme.STANDARD);
             sparkReporter.config().setDocumentTitle("Relatório de Testes Automatizados");
-            sparkReporter.config().setReportName("Execução dos Testes - Magento");
+            sparkReporter.config().setReportName("Execução dos Testes - Selenium");
             sparkReporter.config().setEncoding("UTF-8");
 
             extent = new ExtentReports();
             extent.attachReporter(sparkReporter);
-            System.out.println("✅ ExtentReports inicializado com sucesso!");
+            System.out.println("✅ ExtentReports inicializado: " + reportPath);
         }
         return extent;
     }
@@ -47,7 +52,9 @@ public class ExtentManager {
     public static void flush() {
         if (extent != null) {
             extent.flush();
-            System.out.println("📄 Relatório salvo em: " + reportPath);
+            System.out.println("📄 Relatório salvo com sucesso em: " + reportPath);
+        } else {
+            System.out.println("❌ ERRO: ExtentReports não foi inicializado corretamente.");
         }
     }
 }
