@@ -87,7 +87,7 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/resources/suiteTest.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
       </plugin>
     </plugins>

@@ -32,3 +32,12 @@ Funcionalidade: Fluxo de Compra E2E no Magento
     E sigo para checkout
     E finalizo a compra selecionando método de envio e confirmando pedido
     Então vejo a confirmação do pedido realizado com sucesso
+
+# 1️⃣ Iniciar o Selenium Grid no Docker
+docker-compose up -d
+
+# 2️⃣ Executar os Testes no Container
+docker-compose run --rm tests
+
+# 3️⃣ Derrubar os Containers Após os Testes
+docker-compose down

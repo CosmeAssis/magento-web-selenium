@@ -27,10 +27,10 @@ jobs:
         run: mvn clean install
 
       - name: ▶️ Executar Testes
-        run: mvn test
+        run: mvn test -X
 
-      - name: 📤 Fazer Upload do Relatório de Testes
-        uses: actions/upload-artifact@v4  # 🔥 Atualizado para `v4`
+      - name: 📤 Fazer Upload dos Relatórios de Teste
+        uses: actions/upload-artifact@v4
         with:
-          name: AutomationReport
-          path: target/test-reports/AutomationReport.html
+          name: Surefire-Reports
+          path: target/surefire-reports

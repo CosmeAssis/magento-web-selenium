@@ -1,13 +1,12 @@
 package com.template.utils;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.time.Duration;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class WebDriverFactory {
     private static WebDriver driver;
@@ -15,32 +14,35 @@ public class WebDriverFactory {
     public static WebDriver getDriver(String browser) {
         if (driver == null) {
             boolean isHeadless = Boolean.parseBoolean(GlobalParameters.get("headless"));
+            String seleniumServerUrl = System.getenv("SELENIUM_REMOTE_URL");
 
-            switch (browser.toLowerCase()) {
-                case "firefox":
-                    WebDriverManager.firefoxdriver().setup();
-                    FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    if (isHeadless) {
-                        firefoxOptions.addArguments("--headless");
-                    }
-                    driver = new FirefoxDriver(firefoxOptions);
-                    break;
-
-                default: // Chrome (padrão)
-                    WebDriverManager.chromedriver().clearDriverCache().setup();
-                    ChromeOptions chromeOptions = new ChromeOptions();
-                    if (isHeadless) {
-                        chromeOptions.addArguments("--headless");
-                        chromeOptions.addArguments("--disable-gpu");
-                        chromeOptions.addArguments("--window-size=1920,1080");
-                    }
-                    driver = new ChromeDriver(chromeOptions);
-                    break;
+            if (seleniumServerUrl == null || seleniumServerUrl.isEmpty()) {
+                throw new RuntimeException("⚠ ERRO: A variável SELENIUM_REMOTE_URL não está configurada corretamente no ambiente.");
             }
 
-            driver.manage().window().maximize();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            System.out.println("✅ Navegador iniciado: " + browser);
+            try {
+                switch (browser.toLowerCase()) {
+                    case "firefox":
+                        FirefoxOptions firefoxOptions = new FirefoxOptions();
+                        if (isHeadless) {
+                            firefoxOptions.addArguments("--headless");
+                        }
+                        driver = new RemoteWebDriver(new URL(seleniumServerUrl), firefoxOptions);
+                        break;
+
+                    default: // Chrome (padrão)
+                        ChromeOptions chromeOptions = new ChromeOptions();
+                        if (isHeadless) {
+                            chromeOptions.addArguments("--headless");
+                            chromeOptions.addArguments("--disable-gpu");
+                            chromeOptions.addArguments("--window-size=1920,1080");
+                        }
+                        driver = new RemoteWebDriver(new URL(seleniumServerUrl), chromeOptions);
+                        break;
+                }
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("⚠ ERRO: URL do Selenium Server está incorreta: " + seleniumServerUrl, e);
+            }
         }
         return driver;
     }
@@ -49,7 +51,6 @@ public class WebDriverFactory {
         if (driver != null) {
             driver.quit();
             driver = null;
-            System.out.println("🛑 WebDriver fechado com sucesso.");
         }
     }
 }
