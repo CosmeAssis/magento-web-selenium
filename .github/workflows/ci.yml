@@ -1,0 +1,36 @@
+name: Testes Automatizados Magento
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  run-tests:
+    name: Executar Testes Automatizados
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar o Repositório
+        uses: actions/checkout@v3
+
+      - name: 🔧 Configurar Java 21 e Maven
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 📦 Instalar Dependências do Maven
+        run: mvn clean install
+
+      - name: ▶️ Executar Testes
+        run: mvn test
+
+      - name: 📤 Fazer Upload do Relatório de Testes
+        uses: actions/upload-artifact@v3
+        with:
+          name: AutomationReport
+          path: target/test-reports/AutomationReport.html

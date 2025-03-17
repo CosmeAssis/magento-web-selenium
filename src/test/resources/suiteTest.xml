@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite TestNG" verbose="2" configfailurepolicy="continue" parallel="false">
+    <test name="Execução dos Testes Cucumber">
+        <parameter name="cucumber.features" value="src/test/resources/features/"/>
+        <classes>
+            <class name="com.template.runner.TestRunner"/>
+        </classes>
+    </test>
+</suite>
