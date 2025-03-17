@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+
 import java.time.Duration;
 
 public class WebDriverFactory {
@@ -13,37 +14,32 @@ public class WebDriverFactory {
 
     public static WebDriver getDriver(String browser) {
         if (driver == null) {
-            try {
-                boolean isHeadless = Boolean.parseBoolean(GlobalParameters.get("headless"));
+            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
 
-                switch (browser.toLowerCase()) {
-                    case "firefox":
-                        WebDriverManager.firefoxdriver().setup();
-                        FirefoxOptions firefoxOptions = new FirefoxOptions();
-                        if (isHeadless) {
-                            firefoxOptions.addArguments("--headless");
-                        }
-                        driver = new FirefoxDriver(firefoxOptions);
-                        break;
+            switch (browser.toLowerCase()) {
+                case "firefox":
+                    WebDriverManager.firefoxdriver().setup();
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    if (isHeadless) {
+                        firefoxOptions.addArguments("--headless");
+                    }
+                    driver = new FirefoxDriver(firefoxOptions);
+                    break;
 
-                    default: // Chrome (padrão)
-                        WebDriverManager.chromedriver().setup();
-                        ChromeOptions chromeOptions = new ChromeOptions();
-                        if (isHeadless) {
-                            chromeOptions.addArguments("--headless");
-                            chromeOptions.addArguments("--disable-gpu");
-                            chromeOptions.addArguments("--window-size=1920,1080");
-                        }
-                        driver = new ChromeDriver(chromeOptions);
-                        break;
-                }
-
-                driver.manage().window().maximize();
-                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-                System.out.println("✅ Navegador iniciado: " + browser);
-            } catch (Exception e) {
-                throw new RuntimeException("Erro ao inicializar WebDriver: " + e.getMessage(), e);
+                default: // Chrome (padrão)
+                    WebDriverManager.chromedriver().setup();
+                    ChromeOptions chromeOptions = new ChromeOptions();
+                    if (isHeadless) {
+                        chromeOptions.addArguments("--headless");
+                        chromeOptions.addArguments("--disable-gpu");
+                        chromeOptions.addArguments("--window-size=1920,1080");
+                    }
+                    driver = new ChromeDriver(chromeOptions);
+                    break;
             }
+
+            driver.manage().window().maximize();
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         }
         return driver;
     }

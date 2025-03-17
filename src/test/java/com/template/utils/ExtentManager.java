@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+
 import java.io.File;
 
 public class ExtentManager {
@@ -14,18 +15,19 @@ public class ExtentManager {
     public static ExtentReports getInstance() {
         if (extent == null) {
             String basePath = System.getProperty("user.dir");
-            reportPath = basePath + "/target/test-reports/AutomationReport.html";
+            reportPath = basePath + "/target/reports/ExtentReport.html";
 
-            File reportFile = new File(reportPath);
-            if (!reportFile.getParentFile().exists()) {
-                reportFile.getParentFile().mkdirs();
-                System.out.println("📁 Diretório criado: " + reportFile.getParentFile().getAbsolutePath());
+            // ✅ Criar o diretório manualmente se não existir
+            File reportDir = new File(basePath + "/target/reports/");
+            if (!reportDir.exists()) {
+                boolean created = reportDir.mkdirs();
+                System.out.println("📂 Diretório criado? " + created + " | Caminho: " + reportDir.getAbsolutePath());
             }
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
             sparkReporter.config().setTheme(Theme.DARK);
-            sparkReporter.config().setDocumentTitle("Relatório Automatizado");
-            sparkReporter.config().setReportName("Resultados dos Testes");
+            sparkReporter.config().setDocumentTitle("Relatório de Testes Automatizados");
+            sparkReporter.config().setReportName("Execução dos Testes");
             sparkReporter.config().setEncoding("UTF-8");
 
             extent = new ExtentReports();
@@ -47,9 +49,9 @@ public class ExtentManager {
     public static void flush() {
         if (extent != null) {
             extent.flush();
-            System.out.println("📄 Relatório gerado com sucesso: " + reportPath);
+            System.out.println("📄 Relatório salvo em: " + reportPath);
         } else {
-            System.out.println("❌ ERRO: ExtentReports não foi inicializado corretamente.");
+            System.out.println("❌ ERRO: ExtentReports não inicializado corretamente.");
         }
     }
 }
