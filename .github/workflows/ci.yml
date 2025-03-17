@@ -1,4 +1,4 @@
-name: Testes Automatizados - Selenium
+name: Testes Automatizados Magento
 
 on:
   push:
@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Clonar o Repositório
-        uses: actions/checkout@v4  # 🔥 Atualizado para a versão mais recente
+      - name: 📥 Clonar Repositório
+        uses: actions/checkout@v3
 
       - name: 🔧 Configurar Java 21 e Maven
-        uses: actions/setup-java@v4  # 🔥 Atualizado para a versão mais recente
+        uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -27,10 +27,10 @@ jobs:
         run: mvn clean install
 
       - name: ▶️ Executar Testes
-        run: mvn test -X
+        run: mvn test
 
-      - name: 📤 Fazer Upload dos Relatórios de Teste
-        uses: actions/upload-artifact@v4
+      - name: 📤 Upload do Relatório do Cucumber
+        uses: actions/upload-artifact@v3
         with:
-          name: Surefire-Reports
-          path: target/surefire-reports
+          name: CucumberReport
+          path: target/reports/cucumber-report.html

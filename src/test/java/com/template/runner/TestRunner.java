@@ -8,10 +8,11 @@ import io.cucumber.testng.CucumberOptions;
         glue = "com.template.step",
         plugin = {
                 "pretty",
-                "html:reports/cucumber-report.html",
-                "summary"
+                "html:target/reports/cucumber-report.html",
+                "json:target/reports/cucumber-report.json",
+                "junit:target/reports/cucumber-report.xml"
         },
-        publish = true
+        monochrome = true  // Melhor leitura dos logs no terminal
 )
 public class TestRunner extends AbstractTestNGCucumberTests {
 }
