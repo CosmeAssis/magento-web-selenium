@@ -7,13 +7,27 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
 public class PurchaseSteps {
-    WebDriver driver = WebDriverFactory.getDriver("chrome");
-    LoginPage loginPage = new LoginPage(driver);
-    HomePage homePage = new HomePage(driver);
-    ProductPage productPage = new ProductPage(driver);
-    CartPage cartPage = new CartPage(driver);
-    CheckoutPage checkoutPage = new CheckoutPage(driver);
-    OrderConfirmationPage confirmationPage = new OrderConfirmationPage(driver);
+    private WebDriver driver;
+    private LoginPage loginPage;
+    private HomePage homePage;
+    private ProductPage productPage;
+    private CartPage cartPage;
+    private CheckoutPage checkoutPage;
+    private OrderConfirmationPage confirmationPage;
+
+    public PurchaseSteps() {
+        try {
+            this.driver = WebDriverFactory.getDriver("chrome");
+            this.loginPage = new LoginPage(driver);
+            this.homePage = new HomePage(driver);
+            this.productPage = new ProductPage(driver);
+            this.cartPage = new CartPage(driver);
+            this.checkoutPage = new CheckoutPage(driver);
+            this.confirmationPage = new OrderConfirmationPage(driver);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao inicializar PurchaseSteps: " + e.getMessage(), e);
+        }
+    }
 
     @Dado("que estou na página inicial do Magento")
     public void acessarPaginaInicial() {
