@@ -16,22 +16,19 @@ public class PurchaseSteps {
     private OrderConfirmationPage confirmationPage;
 
     public PurchaseSteps() {
-        try {
-            this.driver = WebDriverFactory.getDriver("chrome");
-            this.loginPage = new LoginPage(driver);
-            this.homePage = new HomePage(driver);
-            this.productPage = new ProductPage(driver);
-            this.cartPage = new CartPage(driver);
-            this.checkoutPage = new CheckoutPage(driver);
-            this.confirmationPage = new OrderConfirmationPage(driver);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao inicializar PurchaseSteps: " + e.getMessage(), e);
-        }
+        this.driver = WebDriverFactory.getDriver("chrome"); // 🔥 Garante que o WebDriver seja corretamente instanciado
+        this.loginPage = new LoginPage(driver);
+        this.homePage = new HomePage(driver);
+        this.productPage = new ProductPage(driver);
+        this.cartPage = new CartPage(driver);
+        this.checkoutPage = new CheckoutPage(driver);
+        this.confirmationPage = new OrderConfirmationPage(driver);
     }
 
     @Dado("que estou na página inicial do Magento")
     public void acessarPaginaInicial() {
         driver.get("https://magento.softwaretestingboard.com/");
+        System.out.println("✅ Página inicial acessada.");
     }
 
     @Quando("faço login com email {string} e senha {string}")
@@ -39,28 +36,33 @@ public class PurchaseSteps {
         loginPage.acessarPaginaDeLogin();
         loginPage.preencherCredenciais(email, senha);
         loginPage.clicarBotaoLogin();
+        System.out.println("✅ Login efetuado com sucesso.");
     }
 
     @Quando("escolho o produto {string}")
     public void escolhoOProduto(String nomeProduto) {
         homePage.buscarProduto(nomeProduto);
+        System.out.println("✅ Produto '" + nomeProduto + "' pesquisado.");
     }
 
     @Quando("clico no produto para visualizar detalhes")
     public void clicoNoProdutoParaVisualizarDetalhes() {
         productPage.clicarNoProduto();
+        System.out.println("✅ Produto acessado na página de detalhes.");
     }
 
     @Quando("seleciono o tamanho e a cor e adiciono ao carrinho")
     public void selecionoOTamanhoEACorEAdicionoAoCarrinho() {
         productPage.selecionarVariacoesDoProduto();
         productPage.adicionarAoCarrinho();
+        System.out.println("✅ Produto configurado e adicionado ao carrinho!");
     }
 
     @Quando("sigo para checkout")
     public void sigoParaCheckout() {
         cartPage.acessarCarrinho();
         cartPage.clicarEmProceedToCheckout();
+        System.out.println("✅ Checkout iniciado com sucesso!");
     }
 
     @Quando("finalizo a compra selecionando método de envio e confirmando pedido")
@@ -68,11 +70,13 @@ public class PurchaseSteps {
         checkoutPage.escolherMetodoDeEnvio();
         checkoutPage.clicarEmNext();
         checkoutPage.clicarEmPlaceOrder();
+        System.out.println("✅ Pedido foi finalizado com sucesso!");
     }
 
     @Então("vejo a confirmação do pedido realizado com sucesso")
     public void validarPedido() {
         Assert.assertTrue(checkoutPage.validarPedidoConcluido(), "❌ ERRO: O pedido não foi concluído com sucesso.");
+        System.out.println("✅ Pedido concluído com sucesso.");
         WebDriverFactory.quitDriver();
     }
 }
