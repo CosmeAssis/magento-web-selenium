@@ -24,21 +24,18 @@ public class ProductPage {
     private By botaoAdicionarCarrinho = By.id("product-addtocart-button");
 
     public void clicarNoProduto() {
-        System.out.println("⌛ Aguardando produtos carregarem...");
         List<WebElement> produtos = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(productLinks));
 
         if (!produtos.isEmpty()) {
             WebElement primeiroProduto = produtos.get(0);
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", primeiroProduto);
             primeiroProduto.click();
-            System.out.println("✅ Produto acessado.");
         } else {
             throw new RuntimeException("❌ ERRO: Nenhum produto encontrado!");
         }
     }
 
     public void selecionarVariacoesDoProduto() {
-        System.out.println("⌛ Aguardando opções de tamanho e cor...");
         List<WebElement> tamanhos = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(tamanhoDisponivel));
         List<WebElement> cores = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(corDisponivel));
 
@@ -46,7 +43,6 @@ public class ProductPage {
             WebElement tamanhoSelecionado = tamanhos.get(0);
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", tamanhoSelecionado);
             tamanhoSelecionado.click();
-            System.out.println("✅ Tamanho selecionado.");
         } else {
             throw new RuntimeException("❌ ERRO: Nenhuma opção de tamanho disponível!");
         }
@@ -55,19 +51,16 @@ public class ProductPage {
             WebElement corSelecionada = cores.get(0);
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", corSelecionada);
             corSelecionada.click();
-            System.out.println("✅ Cor selecionada.");
         } else {
             throw new RuntimeException("❌ ERRO: Nenhuma opção de cor disponível!");
         }
     }
 
     public void adicionarAoCarrinho() {
-        System.out.println("⌛ Aguardando botão 'Adicionar ao Carrinho'...");
         WebElement botaoCarrinho = wait.until(ExpectedConditions.elementToBeClickable(botaoAdicionarCarrinho));
 
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", botaoCarrinho);
         botaoCarrinho.click();
 
-        System.out.println("✅ Produto adicionado ao carrinho!");
     }
 }
